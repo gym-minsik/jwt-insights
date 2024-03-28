@@ -6,11 +6,6 @@ Welcome to jwt-insights! This repository is dedicated to providing a deep unders
 
 Understanding how JWT works and implementing JWT Auth mechanism from scratch can greatly enhance your knowledge of web security and auth processes.
 
-#### This repository contains:
-- Detailed explanations of JWT and the concepts of JWT Auth.
-- Creating and verifying JWTs using TypeScript.
-- Implementation of JWT Auth system from the ground up.
-
 ## Table of Contents
 1. [`jwt-concepts`](./jwt-concepts): The concept of JWT as described in the [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519) standard.
 2. **[IN_PROGRESS]** [`jwt-impl`](./jwt-impl):Implementation of JWT generation and verification logic.
