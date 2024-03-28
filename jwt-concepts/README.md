@@ -6,14 +6,35 @@ JWT (JSON Web Token) is a [token](https://en.wikipedia.org/wiki/Security_token) 
 JWT (JSON Web Token) is just a string, composed of three parts: **Header, Payload, and Signature** like this.
 ```ts
 // A string formatted as 'Header.Payload.Signature', where each part is Base64URL encoded.
-const token: JWT = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIkpvaG4gRG9lIiwgImFkbWluIjogdHJ1ZSwgImlhdCI6IDE1MTYyMzkwMjJ9.RC9yxknKI8hKAwmBsdSke2jRc8FQdG_jDl4eRmUQEGU';
+const token: JWT =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIiwiaWF0IjoxNTE2MjM5MDIyfQ.z-zWuZCZf5fmK1CHZHKWy9TWadrSPnTERk_aFS23A98';
+
+const [header, payload, signature] = token.split('.');
 ```
 
-1. **Header:** This is a Base64URL encoded JSON object that spells out the type of token we're dealing with and the hashing algorithm used for the signature, like HMAC SHA256 or RSA. Think of it as the metadata for the token.
-
+1. **Header:** This is a Base64URL encoded JSON object that describes the type of token and the hashing algorithm used for its signature. Consider it the metadata of the token.
+    ```ts
+    const header = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+    const unencodedHeader = {
+      "alg": "HS256",
+      "typ": "JWT"
+    }
+    ```
 2. **Payload:** Here's where the main data of the token lives, also known as claims. These claims can include stuff like who issued the token, when it expires, and some user info. It's also Base64URL encoded.
-
+    ```ts
+    const payload = 'eyJzdWIiOiJ1c2VyLWlkIiwiaWF0IjoxNTE2MjM5MDIyfQ';
+    const unencodedPayload = {
+      "sub": "user-id",
+      "iat": 1516239022,
+      "exp": 1516239322,
+    }
+    ```
 3. **Signature:** The signature is all about keeping things secure. It's created by hashing the encoded header, encoded payload, and a secret or a public/private key pair together. This step ensures that the token hasn't been tampered with during transit. It's also Base64URL encoded.
+   ```ts
+   const signature = 'z-zWuZCZf5fmK1CHZHKWy9TWadrSPnTERk_aFS23A98';
+
+   const isTokenVerified = verify(header, payload, signature, secretKeyOrPublicKey);
+   ```
    
 ## JWT Header
 The header represents the metadata of the token. The following metadata are standardly used:
@@ -72,5 +93,5 @@ When generating JWT signatures, HS256 and RS256 are among the most commonly used
 
 Generally, HS256 and RS256 are widely used JWT signature algorithms. In practical services, a specific algorithm should be selected considering security, performance, and flexibility. HS256, being a symmetric key algorithm, is simple and fast and may be suitable for secure communication within internal systems. On the other hand, RS256, utilizing asymmetric key encryption and Public Key Infrastructure, may be more appropriate for public APIs or authentication between services.
 
-### The Implementation of Encryption Algorithms
-The actual implementation of encryption algorithms is a topic of considerable complexity and is not essential for understanding the concept of JWT. For most purposes, especially if you're not working on a commercial project that requires custom encryption implementations, it's sufficient to use well-established and verified libraries. For instance, the Node.js runtime, written in C++, employs [OpenSSL](https://www.openssl.org/) to implement its standard [crypto](https://nodejs.org/api/crypto.html) library. Developers interested in gaining a deeper understanding of these libraries can refer to their official documentation or source code for more detailed insights.
+### Implementation
+The actual implementation of cryptographic algorithms involves considerable complexity and isn't crucial for grasping the concept of JWT. For most scenarios, particularly outside of commercial projects demanding bespoke cryptographic solutions, relying on established and verified libraries suffices. For example, the Node.js runtime, crafted in C++, uses [OpenSSL](https://www.openssl.org/) for its standard [crypto](https://nodejs.org/api/crypto.html) library. Due to these reasons, we do not implement cryptographic algorithms ourselves.
