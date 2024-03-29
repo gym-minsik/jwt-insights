@@ -29,7 +29,7 @@ const [header, payload, signature] = token.split('.');
       "exp": 1516239322,
     }
     ```
-3. **Signature:** The signature is all about keeping things secure. It's created by hashing the encoded header, encoded payload, and a secret or a public/private key pair together. This step ensures that the token hasn't been tampered with during transit. It's also Base64URL encoded.
+3. **Signature:** The signature is all about keeping things secure. It's created by hashing the encoded header, encoded payload, and a secret or a private key pair together. This step ensures that the token hasn't been tampered with during transit. It's also Base64URL encoded.
    ```ts
    const signature = 'z-zWuZCZf5fmK1CHZHKWy9TWadrSPnTERk_aFS23A98';
 
