@@ -93,5 +93,5 @@ When generating JWT signatures, HS256 and RS256 are among the most commonly used
 
 Generally, HS256 and RS256 are widely used JWT signature algorithms. In practical services, a specific algorithm should be selected considering security, performance, and flexibility. HS256, being a symmetric key algorithm, is simple and fast and may be suitable for secure communication within internal systems. On the other hand, RS256, utilizing asymmetric key encryption and Public Key Infrastructure, may be more appropriate for public APIs or authentication between services.
 
-### Implementation
+### The Details of Cryptographic Algorithms
 The actual implementation of cryptographic algorithms involves considerable complexity and isn't crucial for grasping the concept of JWT. For most scenarios, particularly outside of commercial projects demanding bespoke cryptographic solutions, relying on established and verified libraries suffices. For example, the Node.js runtime, crafted in C++, uses [OpenSSL](https://www.openssl.org/) for its standard [crypto](https://nodejs.org/api/crypto.html) library. Due to these reasons, we do not implement cryptographic algorithms ourselves.
