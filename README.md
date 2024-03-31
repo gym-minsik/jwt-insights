@@ -8,7 +8,7 @@ Understanding how JWT works and implementing JWT Auth mechanism from scratch can
 
 ## Table of Contents
 1. [`jwt-concepts`](./jwt-concepts): The concept of JWT as described in the [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519) standard.
-2. **[IN_PROGRESS]** [`jwt-impl`](./jwt-impl):Implementation of JWT generation and verification logic.
+2. [`jwt-impl`](./jwt-impl):Implementation of JWT generation and verification algorithm.
 3. **[IN_PROGRESS]** [`jwtauth-concepts`](./jwtauth-concepts):The concept of JWT Auth
 4. **[IN_PROGRESS]** [`jwtauth-impl`](./jwtauth-impl):Implementation of an application based on JWT Auth.
 5. [`appendix`](./appendix): Appendix.
