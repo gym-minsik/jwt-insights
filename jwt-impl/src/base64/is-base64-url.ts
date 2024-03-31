@@ -21,30 +21,3 @@ export function isBase64Url(str: string): boolean {
   str = str.trim();
   return str.length > 0 && base64UrlRegex.test(str);
 }
-
-/**
- * Encodes a given object into a Base64URL string.
- *
- * @param target The object to be encoded.
- * @returns The Base64URL encoded string.
- *
- * @throws {Error} Throws an error if the target object is null.
- */
-export function encodeBase64Url(target: object) {
-  if (target === null) {
-    throw new Error('Target object cannot be null');
-  }
-  const str = JSON.stringify(target);
-
-  return Buffer.from(str, 'utf8').toString('base64url');
-}
-
-/**
- * Decodes a Base64URL encoded string back to its original string format.
- *
- * @param {string} str - The Base64URL encoded string to decode.
- * @returns {string} The decoded original string.
- */
-export function decodeBase64Url(str: string) {
-  return Buffer.from(str, 'base64url').toString('utf8');
-}

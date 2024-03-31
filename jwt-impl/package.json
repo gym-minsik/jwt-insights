@@ -1,7 +1,7 @@
 {
   "name": "jwt-impl",
   "version": "1.0.0",
-  "description": "An implementation of JWT as described in RFC 7519.",
+  "description": "An implementation of JWT (JSON Web Token) generation and verification algorithm, without the use of third-party libraries.",
   "main": "index.js",
   "scripts": {
     "test": "jest"
