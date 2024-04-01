@@ -1,4 +1,4 @@
-import { SupportedRsaAlgorithm } from '../../jwt/models/supported-signature-algorithm';
+import { SupportedRsaAlgorithm } from '../models/supported-signature-algorithm';
 
 export function completeRsaSignatureAlgorithm(
   algorithm: SupportedRsaAlgorithm

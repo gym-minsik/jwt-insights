@@ -1,4 +1,4 @@
-import { SupportedSignatureAlgorithm } from './models/supported-signature-algorithm';
+import { SupportedSignatureAlgorithm } from '../cryptographic/models/supported-signature-algorithm';
 import { sign } from './sign';
 import { Duration } from '../global/models/duration';
 import { NumericDate } from '../global/models/numeric-date';

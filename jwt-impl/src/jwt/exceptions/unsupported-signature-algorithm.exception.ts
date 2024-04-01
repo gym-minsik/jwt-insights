@@ -1,4 +1,4 @@
-import { SupportedSignatureAlgorithm } from '../models/supported-signature-algorithm';
+import { SupportedSignatureAlgorithm } from '../../cryptographic/models/supported-signature-algorithm';
 
 export class UnsupportedSignatureAlgorithmException extends Error {
   constructor(public readonly algorithm: string) {

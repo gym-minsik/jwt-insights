@@ -1,4 +1,4 @@
-import { SupportedHmacAlgorithm } from '../jwt/models/supported-signature-algorithm';
+import { SupportedHmacAlgorithm } from './models/supported-signature-algorithm';
 import { SecretKey } from './models/secret-key';
 import crypto from 'crypto';
 

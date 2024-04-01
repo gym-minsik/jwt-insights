@@ -1,4 +1,4 @@
-import { SupportedHmacAlgorithm } from '../models/supported-signature-algorithm';
+import { SupportedHmacAlgorithm } from '../../cryptographic/models/supported-signature-algorithm';
 
 export function isSupportedHmacAlgorithm(v: any): v is SupportedHmacAlgorithm {
   return (

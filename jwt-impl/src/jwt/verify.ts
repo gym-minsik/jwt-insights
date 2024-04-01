@@ -1,5 +1,5 @@
 import { InvalidJwtFormatException } from './exceptions/invalid-jwt-format.exception';
-import { SupportedSignatureAlgorithm } from './models/supported-signature-algorithm';
+import { SupportedSignatureAlgorithm } from '../cryptographic/models/supported-signature-algorithm';
 import { isJwtHeader } from './validators/is-jwt-header';
 import { SecretKey } from '../cryptographic/models/secret-key';
 import { PublicKey } from '../cryptographic/models/public-key';

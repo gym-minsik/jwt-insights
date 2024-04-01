@@ -9,7 +9,7 @@ import {
   Subject,
 } from '../module';
 import { InvalidJwtFormatException } from './exceptions/invalid-jwt-format.exception';
-import { SupportedSignatureAlgorithm } from './models/supported-signature-algorithm';
+import { SupportedSignatureAlgorithm } from '../cryptographic/models/supported-signature-algorithm';
 import { createJwt } from './utils/create-jwt';
 import { verify } from './verify';
 import crypto from 'crypto';

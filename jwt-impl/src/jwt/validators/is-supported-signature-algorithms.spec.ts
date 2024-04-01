@@ -1,4 +1,4 @@
-import { SupportedSignatureAlgorithm } from '../models/supported-signature-algorithm';
+import { SupportedSignatureAlgorithm } from '../../cryptographic/models/supported-signature-algorithm';
 import { isSupportedSignatureAlgorithm } from './is-supported-signature-algorithms';
 
 describe('isSupportedSignatureAlgorithm', () => {

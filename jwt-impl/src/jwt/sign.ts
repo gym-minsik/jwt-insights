@@ -14,7 +14,7 @@ import { Duration } from '../global/models/duration';
 import {
   SupportedHmacAlgorithm,
   SupportedSignatureAlgorithm,
-} from './models/supported-signature-algorithm';
+} from '../cryptographic/models/supported-signature-algorithm';
 import { NumericDate } from '../global/models/numeric-date';
 import { JwtHeader } from './models/jwt-header';
 import { SecretKey } from '../cryptographic/models/secret-key';

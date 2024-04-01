@@ -1,4 +1,4 @@
-import { SupportedRsaAlgorithm } from '../models/supported-signature-algorithm';
+import { SupportedRsaAlgorithm } from '../../cryptographic/models/supported-signature-algorithm';
 
 export function isSupportedRsaAlgorithm(v: any): v is SupportedRsaAlgorithm {
   return (

@@ -1,7 +1,7 @@
 import {
   SupportedHmacAlgorithm,
   SupportedRsaAlgorithm,
-} from '../models/supported-signature-algorithm';
+} from '../../cryptographic/models/supported-signature-algorithm';
 import { isSupportedRsaAlgorithm } from './is-supported-rs256-algorithm';
 
 describe('isSupportedRsaAlgorithm', () => {
