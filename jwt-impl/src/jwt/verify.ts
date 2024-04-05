@@ -85,7 +85,6 @@ export function verify<A extends SupportedSignatureAlgorithm>(
   const decodedPayload = JSON.parse(decodeBase64Url(encodedPayload));
 
   if (!isRegisteredClaims(decodedPayload)) {
-    console.log(decodedPayload);
     throw new Error(
       'Invalid JWT payload: Payload does not conform to registered claim specifications.'
     );
