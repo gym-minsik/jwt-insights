@@ -23,9 +23,28 @@ import { generateRsaSignature } from '../cryptographic/generate-rsa-signature';
 import { createJwt } from './utils/create-jwt';
 import { isSupportedHmacAlgorithm } from './validators/is-supported-hmac-algorithm';
 import { generateHmacSignature } from '../cryptographic/generate-hmac-signature';
-import { isSupportedRsaAlgorithm } from './validators/is-supported-rs256-algorithm';
-import { UnsupportedSignatureAlgorithmException } from './exceptions/unsupported-signature-algorithm.exception';
 
+/**
+ * Signs and generates a JSON Web Token (JWT) based on the provided arguments. This function supports both HMAC-based
+ * algorithms (HS*) for symmetric key encryption and RSA-based algorithms (RS*) for asymmetric key encryption.
+ * It ensures the correct type of key is used for the specified algorithm, where HMAC requires a symmetric key (SecretKey)
+ * and RSA requires an asymmetric key (PrivateKey). Attempting to use an incorrect key type results in a compile-time error,
+ * enforced by the TypeScript type system, unless bypassed using `any`.
+ *
+ * @param args - An object containing the necessary parameters to create the JWT, including:
+ *  - `customClaims`: Optional. Custom claims to include in the payload of the JWT. The `customClaims` should be an object
+ *    that does not contain any standard JWT registered claim names (iss, sub, aud, exp, nbf, iat, jti). Attempting to use
+ *    any of these reserved names will result in a compile-time error. This enforcement ensures the separation of custom
+ *    claims from the standard JWT claims, adhering to the JWT specification.
+ *  - `algorithm`: The algorithm to use for signing the JWT. This also dictates the type of key required.
+ *  - `key`: The key used for signing. Depending on the algorithm, this should be either a symmetric secret key
+ *    for HMAC algorithms or a private key for RSA algorithms.
+ *  - `subject`: Optional. The subject claim identifies the principal that is the subject of the JWT.
+ *  - `audience`: Optional. The audience claim identifies the recipients that the JWT is intended for.
+ *  - `expiresIn`: Optional. The duration from the current time after which the JWT should expire.
+ *  - `activeAfter`: Optional. The duration from the current time before which the JWT should not be accepted.
+ *  - `jwtId`: Optional. Provides a unique identifier for the JWT.
+ */
 export function sign<C, A extends SupportedSignatureAlgorithm>(
   args: Readonly<{
     customClaims?: ValidCustomClaims<C>;
@@ -55,8 +74,8 @@ export function sign<C, A extends SupportedSignatureAlgorithm>(
   };
 
   const payload: typeof customClaims extends undefined
-    ? Readonly<RegisteredClaims>
-    : Readonly<RegisteredClaims> & Readonly<C> = {
+    ? RegisteredClaims
+    : RegisteredClaims & C = {
     ...completeSubject(subject),
     ...completeAudience(audience),
     ...completeExpirationDate(expiresIn),
@@ -65,34 +84,25 @@ export function sign<C, A extends SupportedSignatureAlgorithm>(
     ...completeJwtId(jwtId),
     ...completeCustomClaims(customClaims),
   };
+
   const encodedHeader = encodeBase64Url(header);
   const encodedPayload = encodeBase64Url(payload);
   let encodedSignature: string | null = null;
 
   if (isSupportedHmacAlgorithm(header.alg)) {
-    if (key instanceof PrivateKey) {
-      throw new Error(
-        'Incompatible key type: HMAC-based algorithms (HS*) require a symmetric key. ' +
-          'A PrivateKey instance, which is asymmetric, was provided.' +
-          ' Please use a symmetric key for HMAC algorithms.'
-      );
-    }
     encodedSignature = generateHmacSignature(
       createSignatureMessage(encodedHeader, encodedPayload),
-      key,
+      // It is guaranteed to match the expected type Secret Key, as the algorithm dictates the key type.
+      // Casting to `any` is the only way to bypass this type restriction.
+      key as SecretKey,
       header.alg
     );
   } else {
-    if (key instanceof SecretKey) {
-      throw new Error(
-        'Incompatible key type: RSA-based algorithms (RS*) require an asymmetric key. ' +
-          'A SecretKey instance, which is symmetric, was provided. ' +
-          'Please use a PublicKey for signature verification or a PrivateKey for signature generation.'
-      );
-    }
     encodedSignature = generateRsaSignature(
       createSignatureMessage(encodedHeader, encodedPayload),
-      key,
+      // It is guaranteed to match the expected type Private Key, as the algorithm dictates the key type.
+      // Casting to `any` is the only way to bypass this type restriction.
+      key as PrivateKey,
       header.alg
     );
   }
@@ -100,8 +110,8 @@ export function sign<C, A extends SupportedSignatureAlgorithm>(
   return {
     token: createJwt(encodedHeader, encodedPayload, encodedSignature),
     header,
-    payload: payload,
-  } as const;
+    payload,
+  };
 }
 
 function completeCustomClaims<C>(
