@@ -8,13 +8,11 @@ import { NumericDate } from '../global/models/numeric-date';
 import { createSignatureMessage } from './utils/create-signature-message';
 import { isRegisteredClaims } from './validators/is-registered-claims';
 import { isSupportedHmacAlgorithm } from './validators/is-supported-hmac-algorithm';
-import { isSupportedRsaAlgorithm } from './validators/is-supported-rs256-algorithm';
 import { VerifiedJwtPayload } from './models/verified-jwt-payload';
 import { verifyRsaSignature } from '../cryptographic/verify-rsa-signature';
 import { verifyHmacSignature } from '../cryptographic/verify-hmac-signature';
 import { isBase64Url } from '../base64/is-base64-url';
 import { decodeBase64Url } from '../base64/decode-base64-url';
-import { UnsupportedSignatureAlgorithmException } from './exceptions/unsupported-signature-algorithm.exception';
 
 export function verify<A extends SupportedSignatureAlgorithm>(
   args: Readonly<{
