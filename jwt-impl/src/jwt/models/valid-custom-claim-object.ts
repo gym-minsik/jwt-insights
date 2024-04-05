@@ -54,8 +54,4 @@ export type ValidCustomClaims<T> = T extends PrimitiveType
   ? never
   : T extends { jti: any }
   ? never
-  : OnlyStringKeys<T>;
-
-type OnlyStringKeys<T> = {
-  [K in keyof T]: K extends string ? T[K] : never;
-};
+  : T;
