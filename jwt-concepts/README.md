@@ -1,55 +1,44 @@
-# JWT Concepts
-## What is JWT?
+# What is JWT?
 JWT (JSON Web Token) is a [token](https://en.wikipedia.org/wiki/Security_token) that is used to transfer information securely between two parties — a client and a server.
 
-## Components
-JWT (JSON Web Token) is just a string, composed of three parts: **Header, Payload, and Signature** like this.
+# Terminologies
+JWT (JSON Web Token) is composed of three parts: **Header, Payload, and Signature**.
+
+## Header 
+This describes the type of token and the hashing algorithm used for its signature. Consider it is the metadata of the token. The following pieces of metadata are standardly included:  
+- `typ`: This field specifies the token's type, which is typically "JWT". It is recommended to use uppercase letters to ensure compatibility with older systems. Although the `typ` value is optional and not absolutely required (the token can still be recognized as a JWT without it), it helps in contexts where the token type might be ambiguous. Most libraries that generate or verify JWTs automatically include this field with the value `'JWT'`.
+
+- `alg`: This indicates the cryptographic algorithm used to create the signature, ensuring the integrity of the token.
+
+### Header: Modeling
+ 
 ```ts
-// A string formatted as 'Header.Payload.Signature', where each part is Base64URL encoded.
-const token: JWT =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIiwiaWF0IjoxNTE2MjM5MDIyfQ.z-zWuZCZf5fmK1CHZHKWy9TWadrSPnTERk_aFS23A98';
+interface JwtHeader {
+  typ: 'JWT';
+  alg: 'HS256' | 'RS256' | ...;
+}
 
-const [header, payload, signature] = token.split('.');
+const header: JwtHeader = {
+  alg: 'HS256',
+  typ: 'JWT',
+};
+
+const encodedHeader = encodeBase64URL(header);
+assert(encodedHeader === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
 ```
-
-1. **Header:** This is a Base64URL encoded JSON object that describes the type of token and the hashing algorithm used for its signature. Consider it the metadata of the token.
-    ```ts
-    const header = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
-    const unencodedHeader = {
-      "alg": "HS256",
-      "typ": "JWT"
-    }
-    ```
-2. **Payload:** Here's where the main data of the token lives, also known as claims. These claims can include stuff like who issued the token, when it expires, and some user info. It's also Base64URL encoded.
-    ```ts
-    const payload = 'eyJzdWIiOiJ1c2VyLWlkIiwiaWF0IjoxNTE2MjM5MDIyfQ';
-    const unencodedPayload = {
-      "sub": "user-id",
-      "iat": 1516239022,
-      "exp": 1516239322,
-    }
-    ```
-3. **Signature:** The signature is all about keeping things secure. It's created by hashing the encoded header, encoded payload, and a secret or a private key pair together. This step ensures that the token hasn't been tampered with during transit. It's also Base64URL encoded.
-   ```ts
-   const signature = 'z-zWuZCZf5fmK1CHZHKWy9TWadrSPnTERk_aFS23A98';
-
-   const isTokenVerified = verify(header, payload, signature, secretKeyOrPublicKey);
-   ```
-   
-## JWT Header
-The header represents the metadata of the token. The following metadata are standardly used:
-1. `typ`: Indicates the type of the token, which is commonly "JWT". The use of uppercase letters is recommended for compatibility with legacy systems. The `typ` value is optional and not strictly necessary unless it is impossible to determine that the token is a JWT otherwise.
-2. `alg`: Describes the hashing algorithm used for signing.
-
-## JWT Payload
+## Payload 
 The main data of the token resides here, also known as claims. A claim refers simply to a key-value pair in the payload.
 ```ts
 type ClaimKey = string;
-type ClaimValue = any;
-type Payload = Record<ClaimKey, ClaimValue>;
+type ClaimValue = unknown;
+
+interface JwtPayload = {
+  [key: ClaimKey]: ClaimValue
+};
 ```
-### Registered Claim
-These are predefined claims defined by the JWT standard.
+### Payload: Registered Claim
+These are a set of predefined claim names to provide a set of useful, interoperable claims.
+
 1. `iss` (Optional): Token Issuer.
 2. `sub` (Optional): The title of the token, which must be unique in the context. A user ID is typically a good choice.
 3. `aud` (Optional): Identifies the intended recipients of the JWT. This claim ensures that the JWT is used only by the intended parties. If the JWT's "aud" claim does not match the identifier of the service, that service must reject the JWT. For example, if "AuthService" issues the following token
@@ -57,7 +46,7 @@ These are predefined claims defined by the JWT standard.
     {
       header: {...}
       payload: {
-        "aud": "PhotoService",
+        aud: "PhotoService",
         ...
       }
     }    
@@ -68,10 +57,45 @@ These are predefined claims defined by the JWT standard.
 6. `iat` (Optional): Indicates the issue date using NumericDate.
 7. `jti` (Optional): A claim for storing the JWT ID. It provides a unique identifier for the token itself when needed.
 
+### Payload: Private Claim (Custom Claim)
+These are the custom claims which parties agree to use among themselves and are neither registered nor public claims. They are used to share information between the parties that the JWT is issued for and can be subject to application-specific logic.
 
+### Payload: Modeling
 
-## JWT Signature
-JWT signatures are used to verify the integrity of the header and payload, ensuring they have not been tampered with during transmission. This process allows for the validation of the token's integrity and the authenticity of the sender, thereby guaranteeing the token's reliability. The cryptographic algorithm used in this process is specified in the JWT header's alg field.
+```ts
+// Typescript doesn't natively support unsigned integer.
+type NumericDate = number; 
+
+interface RegisteredClaims {
+  iss?: string;
+  sub?: string;
+  aud?: string;
+  exp?: NumericDate;
+  nbf?: NumericDate;
+  iat?: NumericDate;
+  jti?: string;
+}
+
+// Although "PrivateClaims" is a valid term, "CustomClaims" is more commonly used in practice.
+interface CustomClaims {
+  isAdmin: boolean;
+}
+
+interface JwtPayload extends RegisteredClaims, CustomClaims {}
+
+const payload: JwtPayload = {
+  sub: 'user-id',
+  iat: 1516239022,
+  exp: 1516239322,
+  isAdmin: false,
+};
+
+const encodedPayload = encodeBase64URL(payload);
+assert(encodedPayload === 'eyJzdWIiOiJ1c2VyLWlkIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkzMjIsImlzQWRtaW4iOmZhbHNlfQ');
+```
+
+## Signature
+JWT signatures are used to verify the integrity of the header and payload, ensuring they have not been tampered with during transmission. The cryptographic algorithm used in this process is specified in the JWT header's `alg` field.
 
 ### Signing
 To ensure the integrity of the header and payload, JWT combines hash algorithms with cryptographic algorithms.
@@ -95,3 +119,70 @@ Generally, HS256 and RS256 are widely used JWT signature algorithms. In practica
 
 ### The Details of Cryptographic Algorithms
 The actual implementation of cryptographic algorithms involves considerable complexity and isn't crucial for grasping the concept of JWT. For most scenarios, particularly outside of commercial projects demanding bespoke cryptographic solutions, relying on established and verified libraries suffices. For example, the Node.js runtime, crafted in C++, uses [OpenSSL](https://www.openssl.org/) for its standard [crypto](https://nodejs.org/api/crypto.html) library. Due to these reasons, we do not implement cryptographic algorithms ourselves.
+
+
+## JWT (JSON Web Token)
+A string composed of three parts: a header, payload, and signature. Each part is encoded using Base64URL. It's important to note that merely concatenating the unencoded header, payload, and signature does not conform to the JWT specification. To form a valid JWT, each component must be individually Base64URL encoded before concatenation.
+
+> The concepts of Base64URL is described on [this document](../appendix/about-base64url.md). If you are not familiar with Base64URL, please read [this document](../appendix/about-base64url.md) first before proceeding.
+
+### Modeling JWT generation.
+
+```ts
+const header: JwtHeader = { ... };
+const payload: JwtPayload = { ... };
+
+// Validates that the header complies with the standard.
+validateHeader(header);
+
+// Validates that the payload complies with the standard.
+validatePayload(payload);
+
+const encodedHeader = encodeBase64URL(header);
+const encodedPayload = encodeBase64URL(paylod);
+const encodedSignature = signHS256(
+  `${encodedHeader}.${encodedPayload}`, 
+  'secret-key',
+);
+
+const token = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
+```
+
+### Modeling JWT verification.
+```ts
+function verify(
+  token: string,
+  key: SecretKey | PublicKey, 
+  algorithm: 'HS256' | 'RS256',
+) {
+  const [encodedHeader, encodedPayload, encodedSignature] = token.split('.');
+
+  const isSignatureVerified = verify(
+    `${encodedHeader}.${encodedPayload}`, 
+    algorithm,
+    key,
+  );
+
+  if (!isSignatureVerified) {
+    throw new Error('Signature verification failed.');
+  }
+
+  const header = JSON.parse(decodeBase64URL(encodedHeader));
+  const payload = JSON.parse(decodeBase64URL(encodedPayload));
+
+  // validate the header and the payload...
+
+  return {
+    header, payload
+  };
+}
+```
+
+# End of Section
+In this introduction to JWT, you've begun to understand the basics: what JWT is, its components, and an overview of the token creation and verification process.
+
+As we move forward, the focus will shift to implementing a JWT creation and verification library. This practical experience will not only deepen your understanding of JWT mechanics but also expand your knowledge in related areas. You'll learn about cryptographic techniques, security practices, and data encoding, skills valuable for any developer.
+
+By engaging with the inner workings of JWT, you'll gain insights that are applicable far beyond just this context, preparing you for a wide range of security challenges in software development. Stay tuned for a journey that promises to be as educational as it is practical.
+
+[Implementation of JWT](../jwt-impl/README.md)
