@@ -1,5 +1,8 @@
 import { InvalidJwtFormatException } from './exceptions/invalid-jwt-format.exception';
-import { SupportedSignatureAlgorithm } from '../cryptographic/models/supported-signature-algorithm';
+import {
+  SupportedHmacAlgorithm,
+  SupportedSignatureAlgorithm,
+} from '../cryptographic/models/supported-signature-algorithm';
 import { isJwtHeader } from './validators/is-jwt-header';
 import { SecretKey } from '../cryptographic/models/secret-key';
 import { PublicKey } from '../cryptographic/models/public-key';
@@ -18,7 +21,7 @@ export function verify<A extends SupportedSignatureAlgorithm>(
   args: Readonly<{
     token: string;
     algorithm: A;
-    key: A extends 'HS256' ? SecretKey : PublicKey;
+    key: A extends SupportedHmacAlgorithm ? SecretKey : PublicKey;
     allowedAudiences?: Audience[];
     allowedSubjects?: Subject[];
     allowedJwtIds?: JwtId[];
