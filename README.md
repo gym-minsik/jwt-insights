@@ -8,7 +8,7 @@ Understanding how JWT works and implementing JWT Auth mechanism from scratch can
 
 ## Table of Contents
 1. [`jwt-concepts`](./jwt-concepts/README.md): An explanation of the JWT (JSON Web Tokens) concept as outlined in the [RFC 7519](https://datatracker.ietf.org/doc/html/rfc7519) standard.
-2. [`jwt-impl`](./jwt-impl): Details the implementation of JWT generation and verification algorithms, including a step-by-step guide.
+2. [`jwt-impl`](./jwt-impl): Details the implementation of JWT generation and verification algorithms.
    - [`sign`](./jwt-impl/src/jwt/sign.ts): Code for generating a JSON Web Token.
    - [`verify`](./jwt-impl/src/jwt/verify.ts): Code for verifying the validity of a token.
    - A guide to implementing JWT signing and verification algorithms is currently being developed. 
